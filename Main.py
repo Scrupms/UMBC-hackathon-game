@@ -22,15 +22,28 @@ testFont=pygame.font.SysFont('comicsansms',50)
 text=testFont.render('skibidi john pork',True,(255,255,255),(0,0,0))
 textRect=text.get_rect()
 textRect.center =(SCREENX//2,SCREENY//2)
+musicPlaying = False
 
-musicPlaying=False
+        
+def PlayMusic(): #music player
+    global musicPlaying
+    pygame.mixer.music.unload()
 
-
+    if currentState == 'Menu':
+        pygame.mixer.music.load('Assets/Music/titlemenu.wav')
+        pygame.mixer.music.play()
+        musicPlaying = True
+            
+    if currentState == 'GamePlay':
+        pygame.mixer.music.load('Assets/Music/maintheme.wav')
+        pygame.mixer.music.play()
+        musicPlaying = True
 
 
 
 
 def QuitFunc():
+    global running
     print('quit func called')
     quit()
     running=False
@@ -54,32 +67,25 @@ class Game:
         self.states={'Menu':self.menu, 'Shop':self.shop, 'GamePlay':self.gamePlay}
         print('display up')
     
-   
-        
-    def PlayMusic(self): #music player
-        if currentState == 'Menu':
-            pygame.mixer.music.load("Assets/Music/spoonsound.wav")
-            pygame.mixer.music.play()
-                
-        if currentState == 'GamePlay':
-            pygame.mixer.music.load('Assets/Music/maintheme.wav')
-            pygame.mixer.music.play()
-
-    
-
 
     def run():
         global ticks
         global currentState
-
         def GameEvent():
             global currentState
+            global musicPlaying
             #print(f'Game Event called, tick={ticks}')
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:                                
+                
+                if event.type == pygame.MOUSEBUTTONDOWN:  
+                    pygame.mixer.music.load('Assets/Music/powerupsound.wav')
+                    pygame.mixer.music.play()                              
                     if startButton.checkForInput(pygame.mouse.get_pos()):
                         print('Start Button Pressed')
                         currentState='GamePlay'
+                        musicPlaying=False
+                        pygame.mixer.music.load('Assets/Music/powerupsound.wav')
+                        pygame.mixer.music.play()
                 if event.type == pygame.QUIT:
                     QuitFunc()
         #main game loop (?)
@@ -90,6 +96,7 @@ class Game:
 
 
 
+            global musicPlaying
 
             match currentState:
                 case 'Menu':
@@ -97,9 +104,22 @@ class Game:
                     screen.blit(pygame.image.load('Assets/Photos/screens/titlescreen.png'))
                     startButton = Button(pygame.image.load('Assets/Photos/screens/playbutton.png'), pygame.image.load('Assets/Photos/screens/playbutton.png'), 760, 510)
                     screen.blit(startButton.getSurface(), startButton.getRect())
+                    if not musicPlaying:
+                        PlayMusic()
                 case 'GamePlay':
+                    
                     print('Gameplay called')
+
                     screen.blit(pygame.image.load('Assets/Photos/screens/gamescreen.png'))
+                    player = pygame.image.load('Assets/Photos/king/kingmiddle.png')
+                    waveWorm=pygame.image.load('Assets/Photos/ui/waveworm.png')
+                    screen.blit(waveWorm)
+                    playerRect=player.get_rect(center=(SCREENX/2, SCREENY/2))
+                    screen.blit(player,playerRect)
+                    
+                    kingSprite=pygame.surface
+                    if not musicPlaying:
+                        PlayMusic()
                     
 
                 
